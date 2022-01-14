@@ -74,31 +74,42 @@ class Dismiss {
 	 */
 	public function print_script() {
 
-		// Create a nonce.
-		$nonce = wp_create_nonce( 'wptrt_dismiss_notice_' . $this->id );
-		?>
-		<script>
-		(function( $ ) {
-			var dismissBtn  = document.querySelector( '#wptrt-notice-<?php echo esc_attr( $this->id ); ?> .notice-dismiss' );
+		$id = $this->id;
 
-			// Add an event listener to the dismiss button.
-			dismissBtn.addEventListener( 'click', function( event ) {
-				var httpRequest = new XMLHttpRequest(),
-					postData    = '';
+		$script_handle = 'wptrt_dismiss_notice_' . $id;
+		$version = '1.0.4';
 
-				// Build the data to send in our request.
-				// Data has to be formatted as a string here.
-				postData += 'id=<?php echo esc_attr( rawurlencode( $this->id ) ); ?>';
-				postData += '&action=wptrt_dismiss_notice';
-				postData += '&nonce=<?php echo esc_html( $nonce ); ?>';
+		wp_register_script( $script_handle, '', array( 'common-js' ), $version, true );
+		wp_enqueue_script( $script_handle );
 
-				httpRequest.open( 'POST', '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>' );
-				httpRequest.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' )
-				httpRequest.send( postData );
-			});
-		})( jQuery );
-		</script>
-		<?php
+		$nonce = wp_create_nonce( $script_handle );
+		$admin_ajax_url = esc_url( admin_url( 'admin-ajax.php' ) );
+
+		$script = <<<EOD
+( function( $ ) {
+	$( function() {
+		var dismissBtn = document.querySelector( '#wptrt-notice-$id .notice-dismiss' );
+
+		// Add an event listener to the dismiss button.
+		dismissBtn.addEventListener( 'click', function( event ) {
+			var httpRequest = new XMLHttpRequest(),
+				postData    = '';
+
+			// Build the data to send in our request.
+			// Data has to be formatted as a string here.
+			postData += 'id=$id';
+			postData += '&action=wptrt_dismiss_notice';
+			postData += '&nonce=$nonce';
+
+			httpRequest.open( 'POST', '$admin_ajax_url' );
+			httpRequest.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' )
+			httpRequest.send( postData );
+		});
+	});
+})( jQuery );
+EOD;
+
+		wp_add_inline_script( $script_handle, $script );
 	}
 
 	/**

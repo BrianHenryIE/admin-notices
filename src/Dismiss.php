@@ -68,21 +68,23 @@ class Dismiss {
 	/**
 	 * Print the script for dismissing the notice.
 	 *
+	 * Invoked from a function hooked on admin_footer.
+	 *
 	 * @access protected
 	 * @since 1.0
 	 * @return void
 	 */
 	public function print_script() {
 
-		$id = $this->id;
+		$id = esc_attr( $this->id );
 
 		$script_handle = 'wptrt_dismiss_notice_' . $id;
-		$version = '1.0.4';
+		$version       = '1.0.4';
 
 		wp_register_script( $script_handle, '', array( 'common-js' ), $version, true );
 		wp_enqueue_script( $script_handle );
 
-		$nonce = wp_create_nonce( $script_handle );
+		$nonce          = wp_create_nonce( $script_handle );
 		$admin_ajax_url = esc_url( admin_url( 'admin-ajax.php' ) );
 
 		$script = <<<EOD

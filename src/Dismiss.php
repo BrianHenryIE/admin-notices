@@ -81,7 +81,7 @@ class Dismiss {
 		$script_handle = 'wptrt_dismiss_notice_' . $id;
 		$version       = '1.0.4';
 
-		wp_register_script( $script_handle, '', array( 'common-js' ), $version, true );
+		wp_register_script( $script_handle, '', array( 'common' ), $version, true );
 		wp_enqueue_script( $script_handle );
 
 		$nonce          = wp_create_nonce( $script_handle );

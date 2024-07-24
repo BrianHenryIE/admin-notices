@@ -84,7 +84,7 @@ class Dismiss {
 jQuery( function() {
     var dismissBtn = document.querySelector( '#wptrt-notice-$id .notice-dismiss' );
 
-    if( ! dismissBtn ) {
+    if ( ! dismissBtn ) {
     	return;
     }
 
